@@ -6,15 +6,16 @@ import { AuthProvider } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DemoBanner from '@/components/DemoBanner';
+import AuthRouteGuard from '@/components/AuthRouteGuard';
 
 export const metadata: Metadata = {
-  title: 'LandCheck AI — Smart Land Verification & Risk Screening Platform (Bangladesh)',
+  title: 'CHECK_&_BUY — Smart Land Verification & Risk Screening Platform (Bangladesh)',
   description:
     'Citizen-friendly decision support platform for pre-purchase land due diligence in Bangladesh. Cross-examine CS, SA, RS, BS survey chains, verify mutation status, and detect title discrepancies before you buy.',
   keywords: [
-    'LandCheck AI',
+    'CHECK_&_BUY',
     'Bangladesh Land Verification',
-    'Landtech Innovation Hackathon 2026',
+    'Pre-purchase Due Diligence',
     'Check Before You Buy',
     'CS Khatian',
     'SA Khatian',
@@ -40,7 +41,11 @@ export default function RootLayout({
             <Suspense fallback={<div className="h-16 bg-white border-b border-slate-200" />}>
               <Navbar />
             </Suspense>
-            <main className="flex-1 flex flex-col">{children}</main>
+            <main className="flex-1 flex flex-col">
+              <Suspense fallback={<div className="flex-1 flex items-center justify-center py-20 text-xs text-slate-500">Loading...</div>}>
+                <AuthRouteGuard>{children}</AuthRouteGuard>
+              </Suspense>
+            </main>
             <Footer />
           </AuthProvider>
         </LanguageProvider>

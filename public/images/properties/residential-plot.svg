@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="60%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#f0fdf4" />
+    </linearGradient>
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="50%" stop-color="#15803d" />
+      <stop offset="100%" stop-color="#14532d" />
+    </linearGradient>
+    <linearGradient id="roadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="800" height="300" fill="url(#skyGrad)" />
+  <circle cx="680" cy="90" r="45" fill="#fef08a" opacity="0.85" filter="blur(2px)" />
+  
+  <!-- Distant Trees & Greenery -->
+  <path d="M0,280 Q120,240 240,270 T480,260 T720,275 T800,270 L800,320 L0,320 Z" fill="#86efac" opacity="0.6" />
+  <path d="M0,290 Q150,265 300,285 T600,280 T800,290 L800,340 L0,340 Z" fill="#4ade80" opacity="0.7" />
+  
+  <!-- Main Land Parcel (Plot) -->
+  <polygon points="120,310 680,310 760,450 40,450" fill="url(#grassGrad)" />
+  
+  <!-- Plot Demarcation Grid & Boundary -->
+  <polygon points="130,315 670,315 745,440 55,440" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="12 8" />
+  
+  <!-- Corner Boundary Survey Pillars -->
+  <g fill="#f8fafc" stroke="#64748b" stroke-width="2">
+    <!-- Top Left Pillar -->
+    <rect x="122" y="300" width="16" height="25" rx="3" fill="#e2e8f0" />
+    <path d="M122,300 L130,290 L138,300 Z" fill="#ef4444" />
+    <text x="130" y="335" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#1e293b" text-anchor="middle">P1</text>
+    
+    <!-- Top Right Pillar -->
+    <rect x="662" y="300" width="16" height="25" rx="3" fill="#e2e8f0" />
+    <path d="M662,300 L670,290 L678,300 Z" fill="#ef4444" />
+    <text x="670" y="335" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#1e293b" text-anchor="middle">P2</text>
+    
+    <!-- Bottom Left Pillar -->
+    <rect x="44" y="420" width="22" height="32" rx="4" fill="#e2e8f0" />
+    <path d="M44,420 L55,406 L66,420 Z" fill="#ef4444" />
+    <text x="55" y="465" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#1e293b" text-anchor="middle">P4</text>
+    
+    <!-- Bottom Right Pillar -->
+    <rect x="734" y="420" width="22" height="32" rx="4" fill="#e2e8f0" />
+    <path d="M734,420 L745,406 L756,420 Z" fill="#ef4444" />
+    <text x="745" y="465" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#1e293b" text-anchor="middle">P3</text>
+  </g>
+  
+  <!-- Front Road Access -->
+  <polygon points="0,460 800,460 800,500 0,500" fill="url(#roadGrad)" />
+  <line x1="0" y1="480" x2="800" y2="480" stroke="#f8fafc" stroke-width="3" stroke-dasharray="25 20" />
+  
+  <!-- Central Badge: Residential Plot Signboard -->
+  <g transform="translate(320, 335)">
+    <rect x="0" y="0" width="160" height="70" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="3" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))" />
+    <rect x="75" y="70" width="10" height="40" fill="#94a3b8" />
+    <text x="80" y="24" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#047857" text-anchor="middle">LANDCHECK VERIFIED</text>
+    <text x="80" y="42" font-family="system-ui, sans-serif" font-size="15" font-weight="900" fill="#0f172a" text-anchor="middle">RESIDENTIAL PLOT</text>
+    <text x="80" y="58" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#64748b" text-anchor="middle">READY FOR BUILDING</text>
+  </g>
+</svg>

@@ -177,3 +177,225 @@ export interface SearchFilters {
   surveyType?: SurveyType;
   statusFilter?: 'all' | 'clean' | 'has_issues';
 }
+
+export type ApplicationDocumentType =
+  | 'khatian_copy'
+  | 'porcha_record'
+  | 'mutation_order'
+  | 'dcr_duplicate'
+  | 'certified_deed'
+  | 'land_clearance_certificate';
+
+export type ApplicationStatus =
+  | 'Draft'
+  | 'Pending'
+  | 'Under_Review'
+  | 'Correction_Required'
+  | 'Approved'
+  | 'Rejected'
+  | 'Document_Available';
+
+export type OwnershipRelation =
+  | 'Owner'
+  | 'Heir / Legal Successor'
+  | 'Power of Attorney'
+  | 'Prospective Buyer / Due Diligence'
+  | 'Authorized Representative';
+
+export interface ApplicationAttachment {
+  id: string;
+  applicationId: string;
+  uploadedBy: string;
+  fileName: string;
+  storageKey: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+}
+
+export interface OfficialDocumentRecord {
+  id: string;
+  applicationId: string;
+  storageKey: string;
+  fileName: string;
+  fileSize: number;
+  uploadedBy: string;
+  uploaderName?: string;
+  documentVersion: number;
+  verificationHash: string;
+  isActive: boolean;
+  uploadedAt: string;
+}
+
+export interface ApplicationStatusHistory {
+  id: string;
+  applicationId: string;
+  oldStatus: ApplicationStatus;
+  newStatus: ApplicationStatus;
+  changedBy: string;
+  changedByName: string;
+  reason?: string;
+  createdAt: string;
+}
+
+export interface LandApplication {
+  id: string;
+  applicationNumber: string; // e.g. "APP-2026-90412"
+  citizenId: string;
+  citizenName: string;
+  citizenPhone: string;
+  citizenEmail?: string;
+  citizenNid?: string;
+  district: string;
+  upazila: string;
+  mouza: string;
+  jlNumber?: string;
+  khatianNo: string;
+  dagNo: string;
+  ownershipRelation: OwnershipRelation;
+  documentType: ApplicationDocumentType;
+  purpose: string;
+  additionalInfo?: string;
+  status: ApplicationStatus;
+  officerMessage?: string;
+  rejectionReason?: string;
+  correctionInstructions?: string;
+  internalNotes?: string;
+  assignedOfficerId?: string;
+  assignedOffice: string;
+  submittedAt: string;
+  updatedAt: string;
+  approvedAt?: string;
+  rejectedAt?: string;
+  attachments: ApplicationAttachment[];
+  officialDocument?: OfficialDocumentRecord;
+  statusHistory: ApplicationStatusHistory[];
+}
+
+export interface InAppNotification {
+  id: string;
+  recipientId: string;
+  applicationId?: string;
+  listingId?: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'action_required' | 'rejection';
+  isRead: boolean;
+  createdAt: string;
+}
+
+// ==========================================
+// MARKETPLACE: BUY & SELL LAND TYPES
+// ==========================================
+
+export type ListingPropertyType =
+  | 'Agricultural'
+  | 'Residential'
+  | 'Commercial'
+  | 'Industrial'
+  | 'Other';
+
+export type ListingAreaUnit = 'Decimal' | 'Katha' | 'Bigha' | 'Acre';
+
+export type ListingStatus =
+  | 'Draft'
+  | 'Pending Review'
+  | 'Under Review'
+  | 'Correction Required'
+  | 'Published'
+  | 'Rejected'
+  | 'Sold'
+  | 'Closed';
+
+export type ListingVerificationStatus =
+  | 'Not Verified'
+  | 'Preliminary Review'
+  | 'Officer Verified';
+
+export interface LandListingImage {
+  id: string;
+  listingId: string;
+  storagePath: string; // URL or base64 data preview
+  isCover: boolean;
+  caption?: string;
+  createdAt: string;
+}
+
+export interface LandListingDocument {
+  id: string;
+  listingId: string;
+  fileName: string;
+  storageKey: string;
+  fileType: string;
+  fileSize: number;
+  uploadedBy: string;
+  createdAt: string;
+}
+
+export interface LandListingInterest {
+  id: string;
+  listingId: string;
+  buyerId: string;
+  buyerName: string;
+  buyerPhone: string;
+  buyerEmail: string;
+  message?: string;
+  status: 'Active' | 'Withdrawn' | 'Contacted';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListingReviewHistory {
+  id: string;
+  listingId: string;
+  reviewerId: string;
+  reviewerName: string;
+  oldStatus: ListingStatus;
+  newStatus: ListingStatus;
+  reason?: string;
+  createdAt: string;
+}
+
+export interface LandListing {
+  id: string;
+  listingNumber: string; // e.g. "LST-2026-10492"
+  sellerId: string;
+  sellerName: string;
+  sellerPhone: string;
+  sellerEmail: string;
+  showPhone: boolean;
+  showEmail: boolean;
+  title: string;
+  propertyType: ListingPropertyType;
+  priceBdt: number;
+  isNegotiable: boolean;
+  areaValue: number;
+  areaUnit: ListingAreaUnit;
+  district: string;
+  upazila: string;
+  mouza: string;
+  locationDescription: string;
+  latitude?: number;
+  longitude?: number;
+  description: string;
+  roadAccess?: string;
+  utilities?: string[];
+  nearbyLandmarks?: string;
+  khatianNo?: string;
+  dagNo?: string;
+  jlNumber?: string;
+  coverImage: string;
+  images: LandListingImage[];
+  documents: LandListingDocument[];
+  status: ListingStatus;
+  verificationStatus: ListingVerificationStatus;
+  verificationBadgeExplanation?: string;
+  reviewReason?: string;
+  correctionInstructions?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  isDemoData?: boolean;
+}
+
+

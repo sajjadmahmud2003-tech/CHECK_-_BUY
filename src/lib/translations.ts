@@ -1,10 +1,10 @@
 export const translations = {
   en: {
     // Brand
-    brandName: 'LandCheck AI',
+    brandName: 'CHECK_&_BUY',
     brandTagline: 'Smart Land Verification & Risk Screening Platform',
-    govTechBadge: 'Landtech Innovation Hackathon 2026 • Problem Statement P5',
-    demoNotice: 'DEMO & SAMPLE DATA MODE • For Citizen Awareness & Hackathon Evaluation Only',
+    govTechBadge: 'GovTech Innovation • Citizen Land Due Diligence Platform',
+    demoNotice: 'DEMO & SAMPLE DATA MODE • For Citizen Awareness & Due Diligence Testing',
 
     // Nav
     navHome: 'Home',
@@ -189,7 +189,7 @@ export const translations = {
     adminTotalAuditLogs: 'Audit Events',
 
     // Auth
-    authSignInTitle: 'Sign In to LandCheck AI',
+    authSignInTitle: 'Sign In to CHECK_&_BUY',
     authRegisterTitle: 'Create Citizen Account',
     authEmail: 'Email Address',
     authPassword: 'Password',
@@ -204,8 +204,8 @@ export const translations = {
 
     // FAQ
     faqTitle: 'Frequently Asked Questions',
-    faqQ1: 'What is the purpose of LandCheck AI?',
-    faqA1: 'LandCheck AI is a citizen-first decision support tool designed for the Landtech Innovation Hackathon 2026. It helps prospective land buyers identify ownership discrepancies, area mismatches, and unapproved mutations before purchasing property in Bangladesh.',
+    faqQ1: 'What is the purpose of CHECK_&_BUY?',
+    faqA1: 'CHECK_&_BUY is a citizen-first decision support tool designed for property buyers in Bangladesh. It helps prospective land buyers identify ownership discrepancies, area mismatches, and unapproved mutations before purchasing property in Bangladesh.',
     faqQ2: 'Does this officially guarantee clear title?',
     faqA2: 'No. The platform performs pre-purchase risk screening based on available digitised records. It flags inconsistencies and guides citizens on what questions to ask and which government offices (AC Land, Sub-Registry, Record Room) to visit for final verification.',
     faqQ3: 'What are CS, SA, RS, and BS khatians?',
@@ -214,19 +214,19 @@ export const translations = {
     faqA4: 'Even if a deed is registered at the Sub-Registry, the buyer does not become the legal taxpayer until mutated at the Assistant Commissioner (Land) office. Buying land from a seller without updated mutation creates high risk of duplicate sale or fraud.',
 
     // Footer
-    footerDesc: 'Smart Land Verification & Pre-Purchase Risk Assessment Platform for Bangladesh. Built for Landtech Innovation Hackathon 2026 (Problem Statement P5: Check Before You Buy).',
+    footerDesc: 'Smart Land Verification & Pre-Purchase Risk Assessment Platform for Bangladesh. Empowering citizens with transparent due diligence: Check Before You Buy.',
     footerLinksHeader: 'Platform',
     footerLegalHeader: 'Legal & Compliance',
     footerGovtDisclaimer: 'Notice: This platform uses simulated demo records to demonstrate GovTech land verification workflows. Not affiliated with the official Land Ministry unless connected via authorized API gateway.',
-    footerCopyright: '© 2026 LandCheck AI • Landtech Innovation Hackathon • Open Source Initiative',
+    footerCopyright: '© 2026 CHECK_&_BUY • Citizen Land Due Diligence Platform • Open Source Initiative',
   },
 
   bn: {
     // Brand
-    brandName: 'ল্যান্ডচেক এআই',
+    brandName: 'CHECK_&_BUY',
     brandTagline: 'স্মার্ট জমি যাচাই ও ক্রয়পূর্ব ঝুঁকি পরীক্ষণ প্ল্যাটফর্ম',
-    govTechBadge: 'ল্যান্ডটেক ইনোভেশন হ্যাকাথন ২০২৬ • সমস্যা বিবৃতি পি৫',
-    demoNotice: 'ডেমো ও নমুনা তথ্য মোড • নাগরিক সচেতনতা ও হ্যাকাথন মূল্যায়নের জন্য প্রস্তুতকৃত',
+    govTechBadge: 'গভটেক উদ্ভাবন • নাগরিক জমি ক্রয়পূর্ব ঝুঁকি পরীক্ষণ',
+    demoNotice: 'ডেমো ও নমুনা তথ্য মোড • নাগরিক সচেতনতা ও পরীক্ষণ উদ্দেশ্যে প্রস্তুতকৃত',
 
     // Nav
     navHome: 'হোম',
@@ -400,7 +400,7 @@ export const translations = {
     dashQuickActions: 'দ্রুত সেবা',
 
     // Admin
-    adminTitle: 'ল্যান্ডচেক গভটেক অ্যাডমিন কন্ট্রোল',
+    adminTitle: 'CHECK_&_BUY গভটেক অ্যাডমিন কন্ট্রোল',
     adminSubtitle: 'সিস্টেম ব্যবহার পর্যবেক্ষণ, নমুনা ডাটাবেজ ব্যবস্থাপনা, ওসিআর প্রক্রিয়াকরণ এবং অডিট লগ দেখুন।',
     adminTabRecords: 'ভূমি রেকর্ড পরিচালনা',
     adminTabLogs: 'সিস্টেম অডিট লগ',
@@ -411,7 +411,7 @@ export const translations = {
     adminTotalAuditLogs: 'অডিট ইভেন্ট',
 
     // Auth
-    authSignInTitle: 'ল্যান্ডচেক এআই-তে প্রবেশ করুন',
+    authSignInTitle: 'CHECK_&_BUY-তে প্রবেশ করুন',
     authRegisterTitle: 'নতুন নাগরিক অ্যাকাউন্ট তৈরি করুন',
     authEmail: 'ইমেইল ঠিকানা',
     authPassword: 'পাসওয়ার্ড',
@@ -426,8 +426,8 @@ export const translations = {
 
     // FAQ
     faqTitle: 'সাধারণ জিজ্ঞাসা (FAQ)',
-    faqQ1: 'ল্যান্ডচেক এআই-এর মূল উদ্দেশ্য কী?',
-    faqA1: 'ল্যান্ডচেক এআই ল্যান্ডটেক ইনোভেশন হ্যাকাথন ২০২৬-এর জন্য উদ্ভাবিত একটি নাগরিকবান্ধব প্ল্যাটফর্ম। জমি কেনার আগেই ক্রেতাকে মালিকানার অসংগতি, পরিমাণের গড়মিল এবং নামজারি সংক্রান্ত ত্রুটি সম্পর্কে সচেতন করাই এর লক্ষ্য।',
+    faqQ1: 'CHECK_&_BUY-এর মূল উদ্দেশ্য কী?',
+    faqA1: 'CHECK_&_BUY বাংলাদেশের সাধারণ নাগরিকদের জন্য প্রস্তুতকৃত একটি নাগরিকবান্ধব প্ল্যাটফর্ম। জমি কেনার আগেই ক্রেতাকে মালিকানার অসংগতি, পরিমাণের গড়মিল এবং নামজারি সংক্রান্ত ত্রুটি সম্পর্কে সচেতন করাই এর লক্ষ্য।',
     faqQ2: 'এটি কি সরকারি চূড়ান্ত মালিকানা নিশ্চিত করে?',
     faqA2: 'না। এটি একটি ঝুঁকি নির্দেশক প্রাথমিক স্ক্রিনিং সিস্টেম। এটি রেকর্ডের অসঙ্গতিসমূহ উন্মোচন করে এবং চূড়ান্ত নিশ্চয়তার জন্য ক্রেতাকে সংশ্লিষ্ট এসিল্যান্ড অফিস ও সাব-রেজিস্ট্রি অফিসে যাচাইয়ের সুস্পষ্ট দিকনির্দেশনা প্রদান করে।',
     faqQ3: 'সিএস, এসএ, আরএস এবং বিএস খতিয়ান বলতে কী বোঝায়?',
@@ -436,10 +436,10 @@ export const translations = {
     faqA4: 'সাব-রেজিস্ট্রি অফিসে শুধু দলিল রেজিস্ট্রি করলেই মালিকানা চূড়ান্ত হয় না। সরকারি রাজস্ব রেকর্ডে নিজের নামে খতিয়ান খোলার জন্য এসিল্যান্ড অফিসে নামজারি আবশ্যক। বিক্রেতার নামে নামজারি না থাকলে ওই জমি কেনা অত্যন্ত ঝুঁকিপূর্ণ।',
 
     // Footer
-    footerDesc: 'বাংলাদেশের নাগরিকদের জমি ক্রয়ের পূর্বে ঝুঁকি যাচাই ও সচেতনতা বৃদ্ধির স্মার্ট প্ল্যাটফর্ম। ল্যান্ডটেক ইনোভেশন হ্যাকাথন ২০২৬ (সমস্যা বিবৃতি পি৫: কেনার আগেই যাচাই করুন)।',
+    footerDesc: 'বাংলাদেশের নাগরিকদের জমি ক্রয়ের পূর্বে ঝুঁকি যাচাই ও সচেতনতা বৃদ্ধির স্মার্ট প্ল্যাটফর্ম। কেনার আগেই নির্ভুলভাবে যাচাই করুন।',
     footerLinksHeader: 'প্ল্যাটফর্ম লিংক',
     footerLegalHeader: 'আইনি শর্তাবলী',
-    footerGovtDisclaimer: 'বিজ্ঞপ্তি: এই অ্যাপ্লিকেশনটি ল্যান্ডটেক হ্যাকাথন প্রদর্শনের জন্য প্রস্তুতকৃত নমুনা তথ্যের ওপর ভিত্তি করে কাজ করে। অনুমোদিত এপিআই ছাড়া এটি সরকারি কোনো আনুষ্ঠানিক নিশ্চয়তা প্রদান করে না।',
-    footerCopyright: '© ২০২৬ ল্যান্ডচেক এআই • ল্যান্ডটেক ইনোভেশন হ্যাকাথন • ওপেন সোর্স উদ্যোগ',
+    footerGovtDisclaimer: 'বিজ্ঞপ্তি: এই অ্যাপ্লিকেশনটি প্রদর্শনের জন্য প্রস্তুতকৃত নমুনা তথ্যের ওপর ভিত্তি করে কাজ করে। অনুমোদিত এপিআই ছাড়া এটি সরকারি কোনো আনুষ্ঠানিক নিশ্চয়তা প্রদান করে না।',
+    footerCopyright: '© ২০২৬ CHECK_&_BUY • নাগরিক ভূমি যাচাই প্ল্যাটফর্ম • ওপেন সোর্স উদ্যোগ',
   }
 };

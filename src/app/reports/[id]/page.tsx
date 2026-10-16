@@ -60,17 +60,27 @@ function ReportViewerContent({
           <span>{language === 'bn' ? 'ড্যাশবোর্ডে ফিরুন' : 'Back to Dashboard'}</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {record && (
+            <Link
+              href={`/apply?district=${encodeURIComponent(record.district)}&upazila=${encodeURIComponent(record.upazila)}&mouza=${encodeURIComponent(record.mouza)}&khatianNo=${encodeURIComponent(record.khatianNo)}&dagNo=${encodeURIComponent(record.dagNo)}&jlNumber=${encodeURIComponent(record.jlNumber)}`}
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>{language === 'bn' ? 'অফিসিয়াল দলিলের আবেদন' : 'Apply for Official Document'}</span>
+            </Link>
+          )}
           <button
             onClick={handleDownload}
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+            title="Download unofficial risk screening report"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>{t.btnDownloadPdf}</span>
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>{language === 'bn' ? 'ডেমো ঝুঁকি রিপোর্ট (অনানুষ্ঠানিক)' : 'Demo Risk Report (Unofficial)'}</span>
           </button>
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>{t.btnPrintReport}</span>
@@ -80,16 +90,36 @@ function ReportViewerContent({
 
       {/* Official GovTech Dossier Sheet */}
       <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-8 print:border-none print:shadow-none print:p-0">
+        {/* Unofficial Banner Warning */}
+        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>
+              {language === 'bn'
+                ? 'অনানুষ্ঠানিক ডেমো বিশ্লেষণ: এই প্রতিবেদনটি জমি ক্রয়ের পূর্বে প্রাথমিক সতর্কতামূলক ঝুঁকি স্ক্রিনিং। এটি কোনো সরকারি খতিয়ান বা আইনি সনদ নয়।'
+                : 'Unofficial Demo Screening: This report is an analytical pre-purchase risk dossier and NOT an official government title document.'}
+            </span>
+          </div>
+          {record && (
+            <Link
+              href={`/apply?district=${encodeURIComponent(record.district)}&upazila=${encodeURIComponent(record.upazila)}&mouza=${encodeURIComponent(record.mouza)}&khatianNo=${encodeURIComponent(record.khatianNo)}&dagNo=${encodeURIComponent(record.dagNo)}&jlNumber=${encodeURIComponent(record.jlNumber)}`}
+              className="text-emerald-800 hover:underline font-bold shrink-0 text-[11px]"
+            >
+              {language === 'bn' ? 'অফিসিয়াল কপি চান? আবেদন করুন →' : 'Need Official Record? Apply →'}
+            </Link>
+          )}
+        </div>
+
         {/* Dossier Header */}
         <div className="border-b-2 border-emerald-900 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="text-xs uppercase font-extrabold text-emerald-800 tracking-wider">
-              LandCheck AI • Bangladesh Land Due Diligence Platform
+              CHECK_&_BUY • Bangladesh Land Due Diligence Platform
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               {language === 'bn'
-                ? 'নাগরিক ক্রয়পূর্ব ভূমি যাচাই প্রতিবেদন'
-                : 'CITIZEN PRE-PURCHASE LAND VERIFICATION DOSSIER'}
+                ? 'নাগরিক ক্রয়পূর্ব ভূমি যাচাই প্রতিবেদন (ডেমো স্ক্রিনিং)'
+                : 'CITIZEN PRE-PURCHASE RISK DOSSIER (DEMO SCREENING)'}
             </h1>
             <p className="text-xs text-slate-500 font-medium">
               Landtech Innovation Hackathon 2026 • Problem Statement P5: Check Before You Buy

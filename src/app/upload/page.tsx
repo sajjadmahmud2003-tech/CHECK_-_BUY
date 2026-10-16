@@ -253,7 +253,7 @@ export default function DocumentUploadPage() {
                 value={rawOcrText}
                 readOnly
                 rows={12}
-                className="w-full bg-slate-50 text-slate-800 font-mono text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-hidden leading-relaxed resize-none"
+                className="w-full bg-white text-slate-900 font-mono text-xs p-3.5 rounded-xl border border-slate-300 focus:outline-hidden leading-relaxed resize-none shadow-2xs"
               />
             </div>
 
@@ -276,7 +276,7 @@ export default function DocumentUploadPage() {
                     type="text"
                     value={editMouza}
                     onChange={(e) => setEditMouza(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-semibold text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                   />
                 </div>
 
@@ -289,7 +289,7 @@ export default function DocumentUploadPage() {
                       type="text"
                       value={editDagNo}
                       onChange={(e) => setEditDagNo(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-emerald-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                      className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-bold text-emerald-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                     />
                   </div>
                   <div>
@@ -300,7 +300,7 @@ export default function DocumentUploadPage() {
                       type="text"
                       value={editKhatianNo}
                       onChange={(e) => setEditKhatianNo(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                      className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-bold text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                     />
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export default function DocumentUploadPage() {
                       step="0.01"
                       value={editArea}
                       onChange={(e) => setEditArea(e.target.value === '' ? '' : parseFloat(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                      className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-bold text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                     />
                   </div>
                   <div>
@@ -326,7 +326,7 @@ export default function DocumentUploadPage() {
                       type="text"
                       value={editDeedNo}
                       onChange={(e) => setEditDeedNo(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                      className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-semibold text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                     />
                   </div>
                 </div>
@@ -339,7 +339,7 @@ export default function DocumentUploadPage() {
                     type="text"
                     value={editOwners}
                     onChange={(e) => setEditOwners(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 font-semibold text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
                   />
                 </div>
 

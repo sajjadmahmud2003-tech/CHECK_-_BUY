@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="agriSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdba74" />
+      <stop offset="50%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fef3c7" />
+    </linearGradient>
+    <linearGradient id="cropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#65a30d" />
+      <stop offset="50%" stop-color="#84cc16" />
+      <stop offset="100%" stop-color="#4d7c0f" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="260" fill="url(#agriSky)" />
+  <circle cx="150" cy="110" r="50" fill="#ea580c" opacity="0.8" />
+  
+  <!-- Distant Palms & Greenery -->
+  <path d="M0,250 Q200,220 400,240 T800,230 L800,280 L0,280 Z" fill="#3f6212" opacity="0.6" />
+  
+  <!-- Agricultural Cropland Field -->
+  <polygon points="80,260 720,260 790,440 10,440" fill="url(#cropGrad)" />
+  
+  <!-- Crop Furrows -->
+  <line x1="160" y1="260" x2="120" y2="440" stroke="#365314" stroke-width="3" opacity="0.4" />
+  <line x1="280" y1="260" x2="260" y2="440" stroke="#365314" stroke-width="3" opacity="0.4" />
+  <line x1="400" y1="260" x2="400" y2="440" stroke="#365314" stroke-width="3" opacity="0.4" />
+  <line x1="520" y1="260" x2="540" y2="440" stroke="#365314" stroke-width="3" opacity="0.4" />
+  <line x1="640" y1="260" x2="680" y2="440" stroke="#365314" stroke-width="3" opacity="0.4" />
+  
+  <!-- Boundary lines -->
+  <polygon points="90,265 710,265 775,430 25,430" fill="none" stroke="#facc15" stroke-width="3" stroke-dasharray="8 6" />
+  
+  <!-- Front Road / Canal -->
+  <polygon points="0,450 800,450 800,500 0,500" fill="#78350f" />
+  <polygon points="0,470 800,470 800,500 0,500" fill="#0284c7" opacity="0.7" />
+  
+  <!-- Signboard -->
+  <g transform="translate(300, 310)">
+    <rect x="0" y="0" width="200" height="75" rx="8" fill="#ffffff" stroke="#65a30d" stroke-width="3" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))" />
+    <rect x="95" y="75" width="10" height="40" fill="#a16207" />
+    <text x="100" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#4d7c0f" text-anchor="middle">FERTILE AGRO LAND</text>
+    <text x="100" y="44" font-family="system-ui, sans-serif" font-size="15" font-weight="900" fill="#0f172a" text-anchor="middle">AGRICULTURAL PLOT</text>
+    <text x="100" y="60" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#ca8a04" text-anchor="middle">CANAL & ROAD ACCESS</text>
+  </g>
+</svg>

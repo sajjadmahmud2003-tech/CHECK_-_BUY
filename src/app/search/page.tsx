@@ -133,7 +133,7 @@ function SearchContent() {
             <select
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             >
               <option value="all">{t.searchAllDistricts}</option>
               {BANGLADESH_DISTRICTS.map((d) => (
@@ -154,7 +154,7 @@ function SearchContent() {
               value={upazila}
               onChange={(e) => setUpazila(e.target.value)}
               placeholder={language === 'bn' ? 'যেমন: ধানমন্ডি' : 'e.g. Dhanmondi'}
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 placeholder:text-slate-500 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             />
           </div>
 
@@ -168,7 +168,7 @@ function SearchContent() {
               value={mouza}
               onChange={(e) => setMouza(e.target.value)}
               placeholder={language === 'bn' ? 'যেমন: বাউনিয়া' : 'e.g. Bawnia'}
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 placeholder:text-slate-500 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             />
           </div>
 
@@ -182,7 +182,7 @@ function SearchContent() {
               value={dagNo}
               onChange={(e) => setDagNo(e.target.value)}
               placeholder="e.g. 405, 1204"
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 placeholder:text-slate-500 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             />
           </div>
 
@@ -196,7 +196,7 @@ function SearchContent() {
               value={khatianNo}
               onChange={(e) => setKhatianNo(e.target.value)}
               placeholder="e.g. 108, 542"
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 placeholder:text-slate-500 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             />
           </div>
 
@@ -208,7 +208,7 @@ function SearchContent() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+              className="w-full bg-white text-slate-900 border border-slate-300 text-xs rounded-xl p-2.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
             >
               <option value="all">{t.searchFilterAll}</option>
               <option value="clean">{t.searchFilterClean}</option>

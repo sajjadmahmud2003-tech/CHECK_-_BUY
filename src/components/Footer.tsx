@@ -25,7 +25,7 @@ export default function Footer() {
             </p>
             <div className="pt-2">
               <span className="inline-block text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60">
-                Hackathon P5: Check Before You Buy
+                Citizen Verification • Check Before You Buy
               </span>
             </div>
           </div>

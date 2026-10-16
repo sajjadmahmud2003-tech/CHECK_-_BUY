@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="indSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="60%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+    <linearGradient id="indGround" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="260" fill="url(#indSky)" />
+  
+  <!-- High Voltage Electricity Pylon -->
+  <g stroke="#334155" stroke-width="2" fill="none">
+    <line x1="120" y1="260" x2="140" y2="80" />
+    <line x1="160" y1="260" x2="140" y2="80" />
+    <line x1="125" y1="220" x2="155" y2="220" />
+    <line x1="130" y1="170" x2="150" y2="170" />
+    <line x1="135" y1="120" x2="145" y2="120" />
+    <line x1="100" y1="120" x2="180" y2="120" stroke-width="3" />
+    <line x1="90" y1="170" x2="190" y2="170" stroke-width="3" />
+    <!-- Power Lines across sky -->
+    <path d="M0,110 Q100,130 180,120 T800,90" stroke="#475569" stroke-width="2" />
+    <path d="M0,160 Q100,180 190,170 T800,140" stroke="#475569" stroke-width="2" />
+  </g>
+  
+  <!-- Industrial Land Lot -->
+  <polygon points="100,260 700,260 780,440 20,440" fill="url(#indGround)" />
+  <polygon points="110,265 690,265 765,430 35,430" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="12 8" />
+  
+  <!-- Perimeter concrete posts -->
+  <g fill="#cbd5e1" stroke="#475569" stroke-width="1.5">
+    <rect x="105" y="250" width="10" height="20" />
+    <rect x="250" y="250" width="10" height="20" />
+    <rect x="400" y="250" width="10" height="20" />
+    <rect x="550" y="250" width="10" height="20" />
+    <rect x="685" y="250" width="10" height="20" />
+    <rect x="25" y="420" width="16" height="30" />
+    <rect x="755" y="420" width="16" height="30" />
+  </g>
+  
+  <!-- Heavy Duty Road -->
+  <polygon points="0,450 800,450 800,500 0,500" fill="#0f172a" />
+  <line x1="0" y1="475" x2="800" y2="475" stroke="#f8fafc" stroke-width="4" stroke-dasharray="30 20" />
+  
+  <!-- Signboard -->
+  <g transform="translate(290, 290)">
+    <rect x="0" y="0" width="220" height="85" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="3" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.2))" />
+    <rect x="105" y="85" width="10" height="40" fill="#64748b" />
+    <text x="110" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#d97706" text-anchor="middle">OFFICER VERIFIED TITLE</text>
+    <text x="110" y="46" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle">INDUSTRIAL SETUP PLOT</text>
+    <text x="110" y="66" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#0284c7" text-anchor="middle">HIGH VOLTAGE & 80 FT ROAD</text>
+  </g>
+</svg>

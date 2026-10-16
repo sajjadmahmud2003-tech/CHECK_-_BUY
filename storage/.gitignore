@@ -1,0 +1,4 @@
+# Private document storage directory
+# Sensitive citizen deeds, khatians, and identity records must NEVER be committed to version control
+private_documents/*
+!private_documents/.gitkeep

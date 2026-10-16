@@ -73,6 +73,18 @@ export function formatDate(dateStr: string | undefined | null, lang: 'en' | 'bn'
   }
 }
 
+export function formatBdt(amount: number | string | undefined | null, lang: 'en' | 'bn' = 'en'): string {
+  if (amount === undefined || amount === null) return lang === 'bn' ? '৳০' : '৳0';
+  const num = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+  
+  // South Asian formatting (lakhs & crores)
+  const parts = num.toLocaleString('en-IN');
+  if (lang === 'bn') {
+    return `৳ ${toBanglaNumber(parts)}`;
+  }
+  return `৳ ${parts}`;
+}
+
 export const BANGLADESH_DISTRICTS = [
   { en: 'Dhaka', bn: 'ঢাকা' },
   { en: 'Chattogram', bn: 'চট্টগ্রাম' },
