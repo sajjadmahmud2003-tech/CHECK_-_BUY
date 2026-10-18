@@ -83,17 +83,26 @@ function mapSupabaseUserToProfile(supaUser: any): UserProfile {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('landcheck_user');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return null;
+  });
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Synchronize session cookie for server-side auth verification on download requests
+  // Synchronize session cookie for server-side auth verification and middleware
   const syncSessionCookie = useCallback((candidateUser: UserProfile | null, token?: string) => {
     if (typeof document !== 'undefined') {
+      const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
       if (candidateUser?.id) {
         const cookieVal = token || candidateUser.id;
-        document.cookie = `landcheck_session=${encodeURIComponent(cookieVal)}; path=/; SameSite=Lax; max-age=604800`;
+        document.cookie = `landcheck_session=${encodeURIComponent(cookieVal)}; path=/; SameSite=Lax; max-age=604800${isSecure ? '; Secure' : ''}`;
       } else {
-        document.cookie = 'landcheck_session=; path=/; max-age=0; SameSite=Lax';
+        document.cookie = `landcheck_session=; path=/; max-age=0; SameSite=Lax${isSecure ? '; Secure' : ''}`;
       }
     }
   }, []);
@@ -101,10 +110,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setCurrentUser = useCallback((newUser: UserProfile | null, token?: string) => {
     setUser(newUser);
     if (newUser) {
-      localStorage.setItem('landcheck_user', JSON.stringify(newUser));
+      try {
+        localStorage.setItem('landcheck_user', JSON.stringify(newUser));
+        if (token) {
+          localStorage.setItem('landcheck_token', token);
+        }
+      } catch {}
       syncSessionCookie(newUser, token);
     } else {
-      localStorage.removeItem('landcheck_user');
+      try {
+        localStorage.removeItem('landcheck_user');
+        localStorage.removeItem('landcheck_token');
+      } catch {}
       syncSessionCookie(null);
     }
   }, [syncSessionCookie]);
@@ -114,7 +131,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let isMounted = true;
 
     async function initAuth() {
-      // 1. If Supabase is active, listen to live auth state
+      // Step A: Immediately hydrate from localStorage if available
+      let localUser: UserProfile | null = null;
+      let localToken: string | null = null;
+      if (typeof window !== 'undefined') {
+        try {
+          const savedUser = localStorage.getItem('landcheck_user');
+          localToken = localStorage.getItem('landcheck_token');
+          if (savedUser) {
+            localUser = JSON.parse(savedUser);
+            if (isMounted) {
+              setUser(localUser);
+            }
+            syncSessionCookie(localUser, localToken || undefined);
+          }
+        } catch {}
+      }
+
+      // Step B: Verify with Supabase if configured
       if (isSupabaseConfigured && supabase) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
@@ -124,27 +158,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setUser(profile);
               syncSessionCookie(profile, session.access_token);
               localStorage.setItem('landcheck_user', JSON.stringify(profile));
+              localStorage.setItem('landcheck_token', session.access_token);
+            } else if (localUser) {
+              setUser(localUser);
+              syncSessionCookie(localUser, localToken || undefined);
             } else {
-              // Check fallback local storage if previously signed in locally
-              const saved = localStorage.getItem('landcheck_user');
-              if (saved) {
-                try {
-                  const parsed = JSON.parse(saved);
-                  // Don't auto-login demo users by default unless explicitly saved
-                  setUser(parsed);
-                  syncSessionCookie(parsed);
-                } catch {
-                  setUser(null);
-                  syncSessionCookie(null);
-                }
-              } else {
-                setUser(null);
-                syncSessionCookie(null);
-              }
+              setUser(null);
+              syncSessionCookie(null);
             }
           }
         } catch {
-          if (isMounted) setUser(null);
+          if (isMounted && !localUser) setUser(null);
         } finally {
           if (isMounted) setLoading(false);
         }
@@ -160,11 +184,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(profile);
                 syncSessionCookie(profile, session.access_token);
                 localStorage.setItem('landcheck_user', JSON.stringify(profile));
+                localStorage.setItem('landcheck_token', session.access_token);
               }
             } else if (event === 'SIGNED_OUT') {
               setUser(null);
               syncSessionCookie(null);
               localStorage.removeItem('landcheck_user');
+              localStorage.removeItem('landcheck_token');
             }
           }
         );
@@ -173,20 +199,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           subscription.unsubscribe();
         };
       } else {
-        // 2. Supabase not configured: Check local storage
-        const saved = localStorage.getItem('landcheck_user');
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            setUser(parsed);
-            syncSessionCookie(parsed);
-          } catch {
-            setUser(null);
+        // Step C: Supabase not configured: Verify session against /api/auth/me
+        try {
+          const res = await fetch('/api/auth/me');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && data.user && isMounted) {
+              setUser(data.user);
+              localStorage.setItem('landcheck_user', JSON.stringify(data.user));
+              syncSessionCookie(data.user, localToken || undefined);
+            }
+          } else if (res.status === 401 && !localUser) {
+            if (isMounted) {
+              setUser(null);
+              syncSessionCookie(null);
+            }
           }
-        } else {
-          setUser(null);
+        } catch {
+          // If network error, retain localUser from localStorage
+        } finally {
+          if (isMounted) setLoading(false);
         }
-        setLoading(false);
       }
     }
 
@@ -215,7 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!res.ok) {
           return { success: false, error: data.error || 'Registration failed.' };
         }
-        setCurrentUser(data.user);
+        setCurrentUser(data.user, data.token);
         return { success: true };
       } catch (err: any) {
         return { success: false, error: err.message || 'Network error' };
@@ -237,6 +270,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
+        // If Supabase signup fails, try fallback server-side register
+        try {
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, fullName, role: 'citizen' }),
+          });
+          const localData = await res.json();
+          if (res.ok && localData.success) {
+            setCurrentUser(localData.user, localData.token);
+            return { success: true };
+          }
+        } catch {}
         return { success: false, error: error.message };
       }
 
@@ -256,48 +302,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Supabase: Sign In with Email and Password
+  // Sign In with Email and Password
   const signInWithEmail = async (
     email: string,
     password: string
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!isSupabaseConfigured || !supabase) {
-      // Fallback to local server credentials endpoint
+    // If Supabase is configured, try Supabase first
+    if (isSupabaseConfigured && supabase) {
       try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identifier: email, password }),
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          return { success: false, error: data.error || 'Invalid ID or password.' };
+
+        if (!error && data.user && data.session) {
+          const profile = mapSupabaseUserToProfile(data.user);
+          setCurrentUser(profile, data.session.access_token);
+          return { success: true };
         }
-        setCurrentUser(data.user, data.token);
-        return { success: true };
-      } catch (err: any) {
-        return { success: false, error: err.message || 'Network error' };
+      } catch {
+        // Fall through to server-auth credentials check
       }
     }
 
+    // Direct server credentials authentication endpoint (supports pre-seeded & locally registered users)
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password }),
       });
-
-      if (error) {
-        return { success: false, error: error.message };
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Invalid ID or password.' };
       }
-
-      if (data.user && data.session) {
-        const profile = mapSupabaseUserToProfile(data.user);
-        setCurrentUser(profile, data.session.access_token);
-      }
-
+      setCurrentUser(data.user, data.token);
       return { success: true };
     } catch (err: any) {
-      return { success: false, error: err.message || 'An unexpected error occurred during login.' };
+      return { success: false, error: err.message || 'Network error' };
     }
   };
 
@@ -402,6 +444,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isSupabaseConfigured && supabase) {
         await supabase.auth.signOut();
       }
+      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     } catch {
       // Ignore signOut errors
     } finally {

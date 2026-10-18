@@ -13,6 +13,7 @@ export const PUBLIC_ROUTES = [
   '/signup',
   '/forgot-password',
   '/reset-password',
+  '/auth',
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
@@ -65,4 +66,70 @@ export function isPublicPath(pathname: string): boolean {
   }
 
   return false;
+}
+
+/**
+ * Sanitizes and validates post-login redirect targets.
+ * Prevents 404 Not Found errors, redirect loops, open redirects, and unauthorized elevation.
+ */
+export function getSafeRedirectUrl(target?: string | null, userRole: string = 'citizen'): string {
+  if (!target) return '/dashboard';
+  let decoded = target;
+  try {
+    decoded = decodeURIComponent(target);
+  } catch {
+    // If decoding fails, continue with raw target
+  }
+
+  decoded = decoded.trim();
+
+  // If empty or circular redirect back to login/register/auth portals
+  if (
+    !decoded ||
+    decoded === '/' ||
+    decoded === '/login' ||
+    decoded.startsWith('/login?') ||
+    decoded === '/register' ||
+    decoded.startsWith('/register?') ||
+    decoded === '/signup' ||
+    decoded.startsWith('/signup?') ||
+    decoded === '/auth' ||
+    decoded === '/auth/' ||
+    decoded === '/auth/login' ||
+    decoded.startsWith('/auth/login?') ||
+    decoded === '/auth/register' ||
+    decoded.startsWith('/auth/register?') ||
+    decoded.startsWith('/forgot-password') ||
+    decoded.startsWith('/reset-password')
+  ) {
+    return userRole === 'officer' ? '/officer' : userRole === 'admin' ? '/admin' : '/dashboard';
+  }
+
+  // Ensure relative path starts with a leading slash to prevent nested subpath 404s
+  if (!decoded.startsWith('/') && !decoded.startsWith('http://') && !decoded.startsWith('https://')) {
+    decoded = '/' + decoded;
+  }
+
+  // Block external redirects (open redirect vulnerability)
+  if (decoded.startsWith('//') || decoded.startsWith('http://') || decoded.startsWith('https://')) {
+    return userRole === 'officer' ? '/officer' : userRole === 'admin' ? '/admin' : '/dashboard';
+  }
+
+  // Map directory routes with no index page to their intended destinations
+  if (decoded === '/records' || decoded === '/records/') return '/search';
+  if (decoded === '/reports' || decoded === '/reports/') return '/verify';
+
+  // Prevent Citizens from being mistakenly redirected to officer or admin routes
+  if (userRole === 'citizen') {
+    if (decoded.startsWith('/officer') || decoded.startsWith('/admin')) {
+      return '/dashboard';
+    }
+  }
+
+  // Prevent Land Officers from being sent to admin routes
+  if (userRole === 'officer' && decoded.startsWith('/admin')) {
+    return '/officer';
+  }
+
+  return decoded;
 }

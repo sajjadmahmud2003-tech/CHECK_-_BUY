@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { isPublicPath } from '@/lib/auth-routes';
+import { isPublicPath, getSafeRedirectUrl } from '@/lib/auth-routes';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -35,14 +35,31 @@ export default function AuthRouteGuard({ children }: AuthRouteGuardProps) {
 
   const isPublic = isPublicPath(pathname || '/');
 
-  // Trigger redirection when unauthenticated on a protected route
+  // Trigger redirection when unauthenticated on a protected route, or when already authenticated on login/register
   useEffect(() => {
     if (!mounted || loading) return;
 
+    // 1. If user is already authenticated and visits login/register, redirect them to dashboard/next
+    const isAuthPortal =
+      pathname === '/login' ||
+      pathname === '/register' ||
+      pathname === '/signup' ||
+      pathname === '/auth/login' ||
+      pathname === '/auth/register';
+
+    if (user && isAuthPortal) {
+      const nextParam = searchParams?.get('next') || searchParams?.get('redirect');
+      const safeTarget = getSafeRedirectUrl(nextParam, user.role);
+      router.replace(safeTarget);
+      return;
+    }
+
+    // 2. If unauthenticated on a protected route, redirect to login
     if (!isPublic && !user) {
       const queryString = searchParams?.toString();
       const currentFullPath = pathname + (queryString ? `?${queryString}` : '');
-      const redirectUrl = `/login?next=${encodeURIComponent(currentFullPath)}&notice=auth_required`;
+      const safeTarget = getSafeRedirectUrl(currentFullPath, 'citizen');
+      const redirectUrl = `/login?next=${encodeURIComponent(safeTarget)}&notice=auth_required`;
       router.replace(redirectUrl);
     }
   }, [mounted, loading, isPublic, user, pathname, searchParams, router]);
@@ -82,8 +99,9 @@ export default function AuthRouteGuard({ children }: AuthRouteGuardProps) {
   if (!user) {
     const queryString = searchParams?.toString();
     const currentFullPath = pathname + (queryString ? `?${queryString}` : '');
-    const loginTarget = `/login?next=${encodeURIComponent(currentFullPath)}&notice=auth_required`;
-    const signupTarget = `/register?next=${encodeURIComponent(currentFullPath)}`;
+    const safeTarget = getSafeRedirectUrl(currentFullPath, 'citizen');
+    const loginTarget = `/login?next=${encodeURIComponent(safeTarget)}&notice=auth_required`;
+    const signupTarget = `/register?next=${encodeURIComponent(safeTarget)}`;
 
     return (
       <div className="flex-1 flex items-center justify-center min-h-[70vh] py-16 px-4 sm:px-6 bg-slate-50/70">

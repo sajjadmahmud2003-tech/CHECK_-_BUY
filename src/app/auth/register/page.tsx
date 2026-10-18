@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
+import { getSafeRedirectUrl } from '@/lib/auth-routes';
 import {
   ShieldCheck,
   Mail,
@@ -20,10 +21,18 @@ import {
 
 function RegisterForm() {
   const { language, t } = useLanguage();
-  const { signUpWithEmail, signInWithGoogle, isSupabaseConnected } = useAuth();
+  const { user, signUpWithEmail, signInWithGoogle, isSupabaseConnected } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || searchParams.get('next') || '/dashboard';
+  const rawRedirect = searchParams.get('redirect') || searchParams.get('next');
+  const targetUrl = getSafeRedirectUrl(rawRedirect, user?.role || 'citizen');
+
+  // If already authenticated, redirect away from registration
+  React.useEffect(() => {
+    if (user) {
+      router.replace(targetUrl);
+    }
+  }, [user, targetUrl, router]);
 
   // Form fields
   const [fullName, setFullName] = useState('');
@@ -114,7 +123,7 @@ function RegisterForm() {
         setRegisteredEmail(cleanEmail);
         setVerificationPending(true);
       } else {
-        router.push(redirectUrl);
+        router.push(targetUrl);
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'An unexpected error occurred.');
@@ -127,7 +136,7 @@ function RegisterForm() {
     setErrorMsg(null);
     setGoogleLoading(true);
     try {
-      const res = await signInWithGoogle(redirectUrl);
+      const res = await signInWithGoogle(targetUrl);
       if (!res.success && res.error) {
         setErrorMsg(res.error);
         setGoogleLoading(false);
@@ -172,7 +181,7 @@ function RegisterForm() {
 
           <div className="pt-2 flex flex-col gap-2">
             <Link
-              href={`/login?next=${encodeURIComponent(redirectUrl)}`}
+              href={`/login?next=${encodeURIComponent(targetUrl)}`}
               className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>{language === 'bn' ? 'লগইন পেজে যান' : 'Go to Login'}</span>
@@ -417,7 +426,7 @@ function RegisterForm() {
         <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
           <span>{language === 'bn' ? 'ইতিমধ্যে অ্যাকাউন্ট আছে? ' : 'Already registered? '}</span>
           <Link
-            href={`/login?next=${encodeURIComponent(redirectUrl)}`}
+            href={`/login?next=${encodeURIComponent(targetUrl)}`}
             className="font-bold text-emerald-700 hover:underline"
           >
             {language === 'bn' ? 'লগইন করুন' : 'Sign In'}

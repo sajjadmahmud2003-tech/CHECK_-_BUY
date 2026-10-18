@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       path: '/',
       httpOnly: false, // Accessible to client sync and server verification
       sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 3600, // 7 days
     });
 

@@ -1,7 +1,56 @@
 import { NextRequest } from 'next/server';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { UserProfile, UserRole, DocumentRecord } from '@/types';
 import { supabase, isSupabaseConfigured } from './supabase';
+
+// File-based persistence for registered users to survive serverless restarts
+function getPersistenceFilePaths(): string[] {
+  const paths: string[] = [];
+  try {
+    paths.push(path.resolve(process.cwd(), 'storage', 'registered_users.json'));
+  } catch {}
+  try {
+    paths.push('/tmp/registered_users.json');
+  } catch {}
+  return paths;
+}
+
+function persistCredential(cred: UserCredential): void {
+  for (const filePath of getPersistenceFilePaths()) {
+    try {
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      let existing: Record<string, UserCredential> = {};
+      if (fs.existsSync(filePath)) {
+        try {
+          existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        } catch {}
+      }
+      existing[cred.id] = cred;
+      fs.writeFileSync(filePath, JSON.stringify(existing, null, 2), 'utf8');
+    } catch {}
+  }
+}
+
+function loadPersistedCredentials(): void {
+  for (const filePath of getPersistenceFilePaths()) {
+    try {
+      if (fs.existsSync(filePath)) {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        for (const [id, cred] of Object.entries(data)) {
+          if (!CREDENTIALS_STORE.has(id)) {
+            CREDENTIALS_STORE.set(id, cred as UserCredential);
+            REGISTERED_USERS[id] = toUserProfile(cred as UserCredential);
+          }
+        }
+      }
+    } catch {}
+  }
+}
 
 const HMAC_SECRET = process.env.DOCUMENT_SIGNING_SECRET || 'landcheck-secret-signing-key-2026-secure-random';
 export const ADMIN_BOOTSTRAP_SECRET = process.env.ADMIN_BOOTSTRAP_SECRET || 'govtech-admin-bootstrap-secret-2026';
@@ -135,6 +184,15 @@ export function findUserCredentialByIdOrEmail(identifier: string): UserCredentia
       return cred;
     }
   }
+
+  // Reload from persistence if running in a new serverless instance
+  loadPersistedCredentials();
+  for (const cred of CREDENTIALS_STORE.values()) {
+    if (cred.id.toLowerCase() === cleanId || cred.email.toLowerCase() === cleanId) {
+      return cred;
+    }
+  }
+
   return undefined;
 }
 
@@ -275,6 +333,7 @@ export function createCitizenAccount(params: {
   CREDENTIALS_STORE.set(cleanId, newCred);
   const profile = toUserProfile(newCred);
   REGISTERED_USERS[cleanId] = profile;
+  persistCredential(newCred);
 
   return { success: true, status: 201, user: profile };
 }
@@ -293,52 +352,119 @@ export function getAllStaffAccounts(): UserProfile[] {
 }
 
 /**
- * Generates an HMAC-signed session token
+ * Generates an HMAC-signed session token.
+ * Encodes core user profile metadata as base64url so that stateless
+ * serverless lambda instances can authenticate and retrieve the profile
+ * without relying on ephemeral in-memory maps.
  */
 export function createSessionToken(user: UserProfile, expiresInSec: number = 7 * 24 * 3600): string {
   const expiresAt = Math.floor(Date.now() / 1000) + expiresInSec;
-  const payload = `${user.id}:${user.role}:${expiresAt}`;
+  const metaObj = {
+    email: user.email,
+    fullName: user.fullName,
+    phone: user.phone,
+    preferredLanguage: user.preferredLanguage || 'en',
+  };
+  const metaBase64 = Buffer.from(JSON.stringify(metaObj)).toString('base64url');
+  const payload = `${user.id}:${user.role}:${expiresAt}:${metaBase64}`;
   const signature = crypto.createHmac('sha256', HMAC_SECRET).update(payload).digest('hex');
   return `${payload}:${signature}`;
 }
 
 /**
- * Verifies an HMAC-signed session token
+ * Verifies an HMAC-signed session token.
+ * Supports both self-contained 5-part tokens and legacy 4-part tokens.
  */
 export function parseAndVerifySessionToken(token: string): { valid: boolean; user?: UserProfile; error?: string } {
   try {
     const parts = token.split(':');
-    if (parts.length !== 4) {
-      return { valid: false, error: 'Malformed token structure' };
-    }
 
-    const [userId, role, expiresAtStr, sig] = parts;
-    const expiresAt = parseInt(expiresAtStr, 10);
-    if (isNaN(expiresAt) || Math.floor(Date.now() / 1000) > expiresAt) {
-      return { valid: false, error: 'Session has expired' };
-    }
+    // 1. Self-contained 5-part token: [userId, role, expiresAtStr, metaBase64, sig]
+    if (parts.length === 5) {
+      const [userId, role, expiresAtStr, metaBase64, sig] = parts;
+      const expiresAt = parseInt(expiresAtStr, 10);
+      if (isNaN(expiresAt) || Math.floor(Date.now() / 1000) > expiresAt) {
+        return { valid: false, error: 'Session has expired' };
+      }
 
-    const expectedPayload = `${userId}:${role}:${expiresAtStr}`;
-    const expectedSig = crypto.createHmac('sha256', HMAC_SECRET).update(expectedPayload).digest('hex');
+      const expectedPayload = `${userId}:${role}:${expiresAtStr}:${metaBase64}`;
+      const expectedSig = crypto.createHmac('sha256', HMAC_SECRET).update(expectedPayload).digest('hex');
 
-    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
-      return { valid: false, error: 'Invalid token signature' };
-    }
+      if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
+        return { valid: false, error: 'Invalid token signature' };
+      }
 
-    // Cross-check with server credentials store to ensure user exists and role hasn't changed
-    const cred = findUserCredentialByIdOrEmail(userId);
-    if (cred) {
-      if (cred.role !== role) {
+      let meta: any = {};
+      try {
+        meta = JSON.parse(Buffer.from(metaBase64, 'base64url').toString('utf8'));
+      } catch {
+        meta = {};
+      }
+
+      // Cross-check if credential exists in store
+      const cred = findUserCredentialByIdOrEmail(userId);
+      if (cred && cred.role !== role) {
         return { valid: false, error: 'User role mismatch' };
       }
-      return { valid: true, user: toUserProfile(cred) };
+
+      const userProfile: UserProfile = {
+        id: userId,
+        email: cred?.email || meta.email || `${userId}@landcheck.gov.bd`,
+        fullName: cred?.fullName || meta.fullName || 'Citizen Buyer',
+        role: (role as UserRole) || 'citizen',
+        phone: cred?.phone || meta.phone,
+        preferredLanguage: cred?.preferredLanguage || meta.preferredLanguage || 'en',
+        createdAt: cred?.createdAt || new Date(expiresAt * 1000 - 7 * 24 * 3600 * 1000).toISOString(),
+      };
+
+      return { valid: true, user: userProfile };
     }
 
-    if (REGISTERED_USERS[userId]) {
-      return { valid: true, user: REGISTERED_USERS[userId] };
+    // 2. Legacy 4-part token: [userId, role, expiresAtStr, sig]
+    if (parts.length === 4) {
+      const [userId, role, expiresAtStr, sig] = parts;
+      const expiresAt = parseInt(expiresAtStr, 10);
+      if (isNaN(expiresAt) || Math.floor(Date.now() / 1000) > expiresAt) {
+        return { valid: false, error: 'Session has expired' };
+      }
+
+      const expectedPayload = `${userId}:${role}:${expiresAtStr}`;
+      const expectedSig = crypto.createHmac('sha256', HMAC_SECRET).update(expectedPayload).digest('hex');
+
+      if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
+        return { valid: false, error: 'Invalid token signature' };
+      }
+
+      const cred = findUserCredentialByIdOrEmail(userId);
+      if (cred) {
+        if (cred.role !== role) {
+          return { valid: false, error: 'User role mismatch' };
+        }
+        return { valid: true, user: toUserProfile(cred) };
+      }
+
+      if (REGISTERED_USERS[userId]) {
+        return { valid: true, user: REGISTERED_USERS[userId] };
+      }
+
+      if (role === 'citizen') {
+        return {
+          valid: true,
+          user: {
+            id: userId,
+            email: `${userId}@citizen.gov.bd`,
+            fullName: `Citizen (${userId})`,
+            role: 'citizen',
+            preferredLanguage: 'en',
+            createdAt: new Date(expiresAt * 1000 - 7 * 24 * 3600 * 1000).toISOString(),
+          },
+        };
+      }
+
+      return { valid: false, error: 'User does not exist in server registry' };
     }
 
-    return { valid: false, error: 'User does not exist in server registry' };
+    return { valid: false, error: 'Malformed token structure' };
   } catch (err: any) {
     return { valid: false, error: err.message || 'Verification error' };
   }
@@ -414,6 +540,7 @@ export async function getAuthenticatedUser(request: NextRequest): Promise<UserPr
     if (verified.valid && verified.user) {
       return verified.user;
     }
+    return null;
   }
 
   // If candidate is a direct user ID / email

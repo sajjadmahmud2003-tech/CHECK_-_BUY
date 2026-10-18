@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
+import { getSafeRedirectUrl } from '@/lib/auth-routes';
 import {
   ShieldCheck,
   Lock,
@@ -20,13 +21,21 @@ import {
 
 function LoginForm() {
   const { language, t } = useLanguage();
-  const { signInWithEmail, signInWithGoogle, isSupabaseConnected } = useAuth();
+  const { user, signInWithEmail, signInWithGoogle, isSupabaseConnected } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || searchParams.get('next') || '/dashboard';
+  const rawRedirect = searchParams.get('redirect') || searchParams.get('next');
+  const targetUrl = getSafeRedirectUrl(rawRedirect, user?.role || 'citizen');
   const urlError = searchParams.get('error');
   const noticeParam = searchParams.get('notice');
   const authRequiredNotice = noticeParam === 'auth_required' || urlError === 'auth_required';
+
+  // If already authenticated, redirect to destination immediately
+  React.useEffect(() => {
+    if (user) {
+      router.replace(targetUrl);
+    }
+  }, [user, targetUrl, router]);
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -75,7 +84,7 @@ function LoginForm() {
         return;
       }
 
-      router.push(redirectUrl);
+      router.push(targetUrl);
     } catch (err: any) {
       setErrorMsg(err.message || 'Authentication error.');
     } finally {
@@ -87,7 +96,7 @@ function LoginForm() {
     setErrorMsg(null);
     setGoogleLoading(true);
     try {
-      const res = await signInWithGoogle(redirectUrl);
+      const res = await signInWithGoogle(targetUrl);
       if (!res.success && res.error) {
         setErrorMsg(res.error);
         setGoogleLoading(false);
@@ -139,7 +148,7 @@ function LoginForm() {
                 {language === 'bn' ? 'অ্যাকাউন্ট নেই?' : "Don't have an account?"}
               </span>
               <Link
-                href={`/register?next=${encodeURIComponent(redirectUrl)}`}
+                href={`/register?next=${encodeURIComponent(targetUrl)}`}
                 className="font-bold text-emerald-800 underline hover:text-emerald-950"
               >
                 {language === 'bn' ? 'নতুন অ্যাকাউন্ট তৈরি করুন (Sign Up)' : 'Create an Account (Sign Up)'}
@@ -309,7 +318,7 @@ function LoginForm() {
         <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
           <span>{language === 'bn' ? 'অ্যাকাউন্ট নেই? ' : "Don't have an account? "}</span>
           <Link
-            href={`/register?next=${encodeURIComponent(redirectUrl)}`}
+            href={`/register?next=${encodeURIComponent(targetUrl)}`}
             className="font-bold text-emerald-700 hover:underline"
           >
             {language === 'bn' ? 'রেজিস্ট্রেশন করুন' : 'Sign Up'}

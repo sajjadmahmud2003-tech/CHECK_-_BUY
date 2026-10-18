@@ -70,9 +70,11 @@ export default function Navbar() {
           ...(currentRole === 'officer'
             ? [{ href: '/officer', label: language === 'bn' ? 'ভূমি কর্মকর্তা শাখা' : 'Officer Section', icon: FileCheck2 }]
             : []),
-          { href: '/admin', label: t.navAdmin, icon: FileText },
           ...(currentRole === 'admin'
-            ? [{ href: '/admin/register', label: language === 'bn' ? 'অ্যাডমিন নিবন্ধন' : 'Staff Register', icon: UserCheck }]
+            ? [
+                { href: '/admin', label: t.navAdmin, icon: FileText },
+                { href: '/admin/register', label: language === 'bn' ? 'অ্যাডমিন নিবন্ধন' : 'Staff Register', icon: UserCheck },
+              ]
             : []),
         ]
       : []),

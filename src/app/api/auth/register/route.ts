@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCitizenAccount } from '@/lib/server-auth';
+import { createCitizenAccount, createSessionToken } from '@/lib/server-auth';
 import { dataStore } from '@/lib/data-store';
 
 export async function POST(request: NextRequest) {
@@ -40,22 +40,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const user = result.user!;
+    const sessionToken = createSessionToken(user);
+
     dataStore.logAction(
       'REGISTER_CITIZEN',
       'user',
-      result.user!.id,
+      user.id,
       `Citizen account created for ${email}`,
-      result.user!.id
+      user.id
     );
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         message: 'Citizen account created successfully.',
-        user: result.user,
+        user,
+        token: sessionToken,
       },
       { status: 201 }
     );
+
+    response.cookies.set({
+      name: 'landcheck_session',
+      value: sessionToken,
+      path: '/',
+      httpOnly: false,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 3600, // 7 days
+    });
+
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Registration failed.' },

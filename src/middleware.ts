@@ -6,6 +6,9 @@ export function middleware(request: NextRequest) {
 
   // 1. Allow public routes immediately
   if (isPublicPath(pathname)) {
+    if (pathname === '/auth' || pathname === '/auth/') {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
     return NextResponse.next();
   }
 
@@ -32,6 +35,14 @@ export function middleware(request: NextRequest) {
     loginUrl.searchParams.set('notice', 'auth_required');
 
     return NextResponse.redirect(loginUrl);
+  }
+
+  // 4. Authenticated sessions: rewrite or redirect missing directory routes to their proper index pages
+  if (pathname === '/records' || pathname === '/records/') {
+    return NextResponse.redirect(new URL('/search', request.url));
+  }
+  if (pathname === '/reports' || pathname === '/reports/') {
+    return NextResponse.redirect(new URL('/verify', request.url));
   }
 
   return NextResponse.next();

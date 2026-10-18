@@ -1,0 +1,22 @@
+{
+  "usr-1792310080044": {
+    "id": "usr-1792310080044",
+    "email": "newcitizen_1792310080037@example.com",
+    "fullName": "Test New Citizen",
+    "role": "citizen",
+    "preferredLanguage": "en",
+    "createdAt": "2026-10-18T07:54:40.145Z",
+    "passwordHash": "b85571a409b1e14eea4dd17bdb4849b2632bd1e350414d298350aca97a3c06eb9ea7c77ab341d4213ce2ef8678de10e4285229acea355fcfaa4e84321914c05e",
+    "salt": "17801ca4708713545459209b556d1e17"
+  },
+  "usr-1792310080622": {
+    "id": "usr-1792310080622",
+    "email": "citizen-1792310080620@test.bd",
+    "fullName": "Valid Citizen",
+    "role": "citizen",
+    "preferredLanguage": "en",
+    "createdAt": "2026-10-18T07:54:40.683Z",
+    "passwordHash": "da97995cc666257007b1ca047294fb5f37c2cbbb2abd7eba15093ab31f11b0bd07b088fbefb328c0aada2e3513ddb724e769102d6d87bb43dc9b91eae02fa0a8",
+    "salt": "5cbe34cff1c7d94bbb77b4273f0e044a"
+  }
+}
